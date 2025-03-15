@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murgrip Quiz - Premium Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 50%, #141e30, #243b55);
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .header {
+            font-size: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            position: absolute;
+            top: 5%;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #ffcc33, #ff5733, #ff33a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 1.5s ease-in-out, glow 1.5s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 204, 51, 0.7), 0 0 20px rgba(255, 87, 51, 0.7); }
+            to { text-shadow: 0 0 20px rgba(255, 204, 51, 1), 0 0 30px rgba(255, 87, 51, 1); }
+        }
+
+        .button, .details-btn {
+            padding: 15px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3), inset 0px 0px 8px rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.4s ease-in-out;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        .button:hover, .details-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.4), inset 0px 0px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .modal input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            margin-top: 10px;
+            padding: 12px 20px;
+            background: red;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">Murgrip Quiz</div>
+    
+    <button class="button" onclick="redirect()">Start Quiz</button>
+    <button class="details-btn" id="detailsBtn" onclick="openModal()">Give Your Details</button>
+
+    <!-- Details Modal -->
+    <div class="modal" id="detailsModal">
+        <form id="detailsForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="cdb2b444-1286-4433-89bb-3aa04967f384">
+
+            <input type="text" name="name" id="name" placeholder="Your Name">
+            <input type="text" name="age" id="age" placeholder="Your Age">
+            <input type="email" name="email" id="email" placeholder="Your Email">
+            <input type="text" name="youtube" id="youtube" placeholder="Your YouTube Channel">
+            <input type="text" name="color" id="color" placeholder="Your Favorite Color">
+            
+            <button type="submit" class="btn btn-primary">Submit Form</button>
+            <button type="button" class="close-btn" onclick="closeModal()">Close</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (localStorage.getItem("formSubmitted")) {
+                document.getElementById("detailsBtn").style.display = "none";
+            }
+        });
+
+        function openModal() {
+            document.getElementById("detailsModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("detailsModal").style.display = "none";
+        }
+
+        document.getElementById("detailsForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let name = document.getElementById("name").value || "🚫 Not Given";
+            let age = document.getElementById("age").value || "🚫 Not Given";
+            let email = document.getElementById("email").value || "🚫@gmail.com";
+            let youtube = document.getElementById("youtube").value || "🚫 Not Given";
+            let color = document.getElementById("color").value || "🚫 Not Given";
+
+            let formData = new FormData(this);
+            formData.set("name", name);
+            formData.set("age", age);
+            formData.set("email", email);
+            formData.set("youtube", youtube);
+            formData.set("color", color);
+
+            fetch(this.action, { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Details Submitted Successfully!");
+                    localStorage.setItem("formSubmitted", "true");
+                    document.getElementById("detailsBtn").style.display = "none";
+                    closeModal();
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+        function redirect() {
+            window.location.href = "view.html";
+        }
+    </script>
+
+</body>
+</html>
